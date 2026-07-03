@@ -60,9 +60,23 @@ Requires R (≥ 4.0) with packages: `forecast`, `tseries` — the script install
 
 Both relationships are statistically significant and in the expected direction: TFR rises with the marriage rate and falls as women's higher-education attainment rises. The marriage-rate model explains more of the variance (R² 0.72 vs. 0.56), suggesting nuptiality is the stronger single predictor of the two over this period — though with only two predictors and strong collinearity between them, neither model isolates a clean causal effect on its own.
 
+<p>
+  <img src="outputs/plot_tfr_vs_marriage_rate.png" alt="TFR vs. marriage rate" width="49%">
+  <img src="outputs/plot_tfr_vs_edu_rate.png" alt="TFR vs. women's education rate" width="49%">
+</p>
+
 **Forecast (ETS, damped trend)**
 
 MAPE (training set): ~6.5%. Ljung-Box (p = 0.66) fails to reject independence of residuals; Shapiro-Wilk (p = 0.11) fails to reject normality — both support the model's assumptions holding reasonably well. The 10-year forecast projects TFR continuing its gradual decline before the damped trend flattens it out, consistent with a low-fertility regime rather than a rebound.
+
+![ETS 10-year forecast](outputs/plot_ets_forecast.png)
+
+**Residual diagnostics**
+
+<p>
+  <img src="outputs/plot_residuals_over_time.png" alt="Residuals over time" width="49%">
+  <img src="outputs/plot_residual_histogram.png" alt="Histogram of residuals" width="49%">
+</p>
 
 ## License
 
