@@ -2,9 +2,11 @@
 
 Examining how women's higher-education attainment and marriage rates relate to Taiwan's total fertility rate (TFR), and forecasting where TFR is headed, using correlation analysis, simple linear regression, and ETS time-series smoothing in R.
 
-## Overview
+## The Policy Question
 
-Taiwan's TFR was 0.865 births per woman in 2023 — well below the 2.1 replacement threshold and among the lowest in the world. This project asks whether two commonly cited societal drivers, women's participation in higher education and the marriage rate, show a measurable statistical relationship with the decline, and builds a short-term forecast of where TFR is trending.
+**North Star metric:** Taiwan's total fertility rate (TFR) — births per woman.
+
+TFR was 0.865 in 2023: well below the 2.1 replacement threshold and among the lowest in the world. Two factors get cited most often as drivers of the decline — women's rising participation in higher education, and a falling marriage rate. This project tests both directly: do they actually move with TFR in the data, by how much, and where is TFR headed if the trend continues?
 
 This started as a group project (Team: Nikolas Perez Linggi [lead], Hsin Yi Peng, Sophia Lee, Julia Hung, Dominick Ortega); this repository is an independent R reproduction of the shared analysis, written and run end-to-end by Hsin Yi Peng.
 
@@ -49,16 +51,18 @@ Rscript analysis/taiwan_fertility_analysis.R
 
 Requires R (≥ 4.0) with packages: `forecast`, `tseries` — the script installs any that are missing on first run. Plots are written to `outputs/`.
 
-## Results
+## Findings
 
-**Regression**
+**Both hypothesized drivers move with TFR, and in the expected direction — but neither can be called out cleanly on its own.**
 
 | Model | Coefficient | Adjusted R² | p-value |
 |---|---|---|---|
 | `tfr ~ marriage_rate` | 6.25 (higher marriage rate → higher TFR) | 0.72 | < 0.001 |
 | `tfr ~ edu_rate` | -0.66 (higher women's education rate → lower TFR) | 0.56 | < 0.001 |
 
-Both relationships are statistically significant and in the expected direction: TFR rises with the marriage rate and falls as women's higher-education attainment rises. The marriage-rate model explains more of the variance (R² 0.72 vs. 0.56), suggesting nuptiality is the stronger single predictor of the two over this period — though with only two predictors and strong collinearity between them, neither model isolates a clean causal effect on its own.
+Both relationships are statistically significant: TFR rises with the marriage rate and falls as women's higher-education attainment rises. The marriage-rate model explains more of the variance (R² 0.72 vs. 0.56), suggesting nuptiality is the stronger single predictor of the two over this period.
+
+**The honest caveat, and why it matters for policy:** marriage rate and education rate are themselves highly correlated (r = -0.95) — both are tracking the same multi-decade social shift, not moving independently. That's why they're modeled separately rather than together (see Methodology). It means this analysis can say "both move with TFR, marriage rate more strongly" but can't cleanly attribute the decline to one policy lever over the other — a policymaker reading this shouldn't conclude "target marriage rate, ignore education," since the data can't rule out that both are proxies for a common underlying trend.
 
 <p>
   <img src="outputs/plot_tfr_vs_marriage_rate.png" alt="TFR vs. marriage rate" width="49%">
@@ -67,7 +71,7 @@ Both relationships are statistically significant and in the expected direction: 
 
 **Forecast (ETS, damped trend)**
 
-MAPE (training set): ~6.5%. Ljung-Box (p = 0.66) fails to reject independence of residuals; Shapiro-Wilk (p = 0.11) fails to reject normality — both support the model's assumptions holding reasonably well. The 10-year forecast projects TFR continuing its gradual decline before the damped trend flattens it out, consistent with a low-fertility regime rather than a rebound.
+MAPE (training set): ~6.5%. Ljung-Box (p = 0.66) fails to reject independence of residuals; Shapiro-Wilk (p = 0.11) fails to reject normality — both support the model's assumptions holding reasonably well. The 10-year forecast projects TFR continuing its gradual decline before the damped trend flattens it out: on current trend, there's no statistical basis for expecting a rebound, which is itself the actionable takeaway for long-term workforce and economic planning.
 
 ![ETS 10-year forecast](outputs/plot_ets_forecast.png)
 
