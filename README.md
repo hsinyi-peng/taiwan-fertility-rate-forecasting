@@ -39,7 +39,8 @@ This started as a group project (Team: Nikolas Perez Linggi [lead], Hsin Yi Peng
 1. **Correlation check** — `marriage_rate` and `womens_edu_rate` are themselves highly correlated (r = -0.95, R² = 0.89), so a multiple regression of TFR on both together is unstable (multicollinearity). Each predictor is instead isolated into its own simple linear regression.
 2. **Simple linear regression** — `tfr ~ marriage_rate` and `tfr ~ edu_rate`, evaluated on coefficient significance and adjusted R².
 3. **Time-series forecasting** — TFR converted to an annual time series and fit with exponential smoothing (ETS, additive error + damped trend, matching the original model selection for this series), forecast 10 years out.
-4. **Residual diagnostics** — Ljung-Box test for residual independence, Shapiro-Wilk test for normality, and a residuals-over-time plot to check for constant variance.
+4. **Baseline comparison** — ETS training MAPE benchmarked against a naive (random walk) forecast and a simple linear trend, so forecast error is judged against a stated baseline rather than reported in isolation.
+5. **Residual diagnostics** — Ljung-Box test for residual independence, Shapiro-Wilk test for normality, and a residuals-over-time plot to check for constant variance.
 
 ## How to run
 
@@ -72,6 +73,16 @@ Both relationships are statistically significant: TFR rises with the marriage ra
 **Forecast (ETS, damped trend)**
 
 MAPE (training set): ~6.5%. Ljung-Box (p = 0.66) fails to reject independence of residuals; Shapiro-Wilk (p = 0.11) fails to reject normality — both support the model's assumptions holding reasonably well. The 10-year forecast projects TFR continuing its gradual decline before the damped trend flattens it out: on current trend, there's no statistical basis for expecting a rebound, which is itself the actionable takeaway for long-term workforce and economic planning.
+
+**Baseline comparison** — "lower error" only means something relative to a stated baseline, so the ETS model is benchmarked against a naive (random walk) forecast and a simple linear trend, all evaluated the same way (training MAPE):
+
+| Model | MAPE |
+|---|---|
+| ETS (damped trend) | 6.48% |
+| Naive (random walk) | 7.43% |
+| Linear trend | 9.66% |
+
+ETS forecast error is **12.7% lower than the naive baseline** (and 32.9% lower than a plain linear trend) — the damped-trend structure is doing real work beyond "just extrapolate last year forward."
 
 ![ETS 10-year forecast](outputs/plot_ets_forecast.png)
 

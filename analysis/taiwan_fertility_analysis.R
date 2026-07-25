@@ -88,6 +88,23 @@ plot(ets_forecast, main = "TFR Forecast (ETS), 10-Year Horizon",
      xlab = "Year", ylab = "Total fertility rate (births per woman)")
 dev.off()
 
+# --------- 4b) Baseline Comparison ---------
+# Benchmark the ETS model against a naive (random walk) forecast and a
+# simple linear trend, so "lower error" has a stated baseline instead of
+# floating on its own.
+naive_model <- naive(tfr_ts)
+naive_mape <- accuracy(naive_model)["Training set", "MAPE"]
+
+lin_model <- tslm(tfr_ts ~ trend)
+lin_mape <- mean(abs((tfr_ts - fitted(lin_model)) / tfr_ts)) * 100
+
+cat("\n== Baseline comparison (training MAPE) ==\n")
+cat(sprintf("ETS (damped trend):     %.2f%%\n", mape_value))
+cat(sprintf("Naive (random walk):    %.2f%%\n", naive_mape))
+cat(sprintf("Linear trend:           %.2f%%\n", lin_mape))
+cat(sprintf("\nETS vs. naive baseline: %.1f%% lower MAPE\n", 100 * (naive_mape - mape_value) / naive_mape))
+cat(sprintf("ETS vs. linear trend:   %.1f%% lower MAPE\n", 100 * (lin_mape - mape_value) / lin_mape))
+
 # --------- 5) Residual Diagnostics ---------
 resid_vals <- residuals(ets_model)
 
